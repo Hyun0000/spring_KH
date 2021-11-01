@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<!-- <!DOCTYPE configuration... : 설정과 관련된 내용이 들어간다. -->
+<configuration>
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	<!-- 전체 XML에 대한 설정 -->
+	<!-- DML문 실행시 #{}에 넣어줄 parameter가 null일 경우 오류가 일어나지 않도록 NULL인 상태로 sql문을 실행해주도록 설정 -->
+	<!-- 지금은  (value="NULL")이기에 NULL인 상태로 실행해주는 것이다. -->
+ 	<!-- 한 마디로 Null을 어떻게 처리할 것인지에 대한 설정이다. -->
+	<!-- (value="NULL") : 반드시 대문자 NULL이여야한다. 아니면 DB 연결이 안 된다. -->
+	<!-- (name="jdbcTypeForNull") : 아것도 그대로 쳐야한다. -->
+	
+	<typeAliases>
+		<typeAlias type="member.model.vo.Member" alias="Member" />
+		<!-- <typeAlias type="board.model.vo.Board" alias="Board" /> -->
+		<!-- Alias들은 <typeAliases> ~ </typeAliases> 영역내에서 한 곳에 몰아서 작성한다. -->
+		<!-- 그래서 <typeAliase's'>인 것이다. -->
+	</typeAliases>
+ 	<!-- package를 포함한 class명에 별칭을 설정하여 매번 type에 모든 경로를 적어야하는 불편함을 덜어준다. -->
+ 	<!-- cf) type : resultType, parameterType 등을 의미 -->
+	<!-- 설정한 Alias는 type에게만 적용되는 것이다. -->
+	<!-- mapper.xml에서 설정하는 'namespace와 Alias는 아무런 관련이 없다.' -->
+	<!-- Alias는 오직 type이 들어간 애들하고만 관련이 있다. -->
+ 	
+	<environments default="development">
+	<!-- development 환경으로 세팅해라 -->
+		<environment id="development">
+		<!-- 위에서 설정한 development 환경에서 사용할 id 지정 -->
+		<!-- JNDI를 이용해 DB를 연결하는 방식과 유사하다고 생각하면 된다. -->
+		<!-- cf) default명과 id명을 반드시  development로 할 필요는 없다. 둘이 일치만하면 된다. -->
+			
+			<transactionManager type="JDBC"/>
+			<!-- 트랜잭션 관리자 설정, JDBC를 대체하는 의미에서 (type = JDBC)로 지정한다. -->
+			<!-- 앞으로 MyBatis가 DB를 연결, 기존의 JDBC는 자원관리 역할을 맞는 것이다. -->
+			<!-- Mybatis는 transactionManager로 트랜잭션을 관리하므로 Autocommit에 대한 설정을 할 수 있다. -->
+			
+			<!-- 데이터베이스 세부 설정 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="oracle.jdbc.driver.OracleDriver"/>
+				<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+				<property name="username" value="scott"/>
+				<property name="password" value="TIGER"/>
+			</dataSource>
+		</environment>
+		<!-- <environment> ~ </environment>영역이 반드시 1개일 필요는 없다. -->
+		<!-- 아래처럼 여러개의 DB 연결 설정을 만들어 놓은 후 필요에 따라 <environments default="development">의 default 값을 변경하면 된다. -->
+		<!-- 그래서 <environment's'>인 것이다. -->
+		
+		<!-- <environment id="d2">에 연결하고 싶으면  <environment's' default= ? >의 값을 아래처럼 설정한다. -->
+		<!-- <environments default="d2"> -->
+		<!-- 
+		<environment id="d2">
+			<transactionManager type="JDBC"/>
+			<dataSource type="POOLED">
+				<property name="driver" value="oracle.jdbc.driver.OracleDriver"/>
+				<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+				<property name="username" value="apple"/>
+				<property name="password" value="mango"/>
+			</dataSource>
+		</environment>
+		 -->
+
+		<!-- <environment id="d3">에 연결하고 싶으면  <environment's' default= ? >의 값을 아래처럼 설정한다. -->
+		<!-- <environments default="d3"> -->
+		<!-- 
+		<environment id="d3">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver"
+					value="oracle.jdbc.driver.OracleDriver" />
+				<property name="url"
+					value="jdbc:oracle:thin:@localhost:1521:xe" />
+				<property name="username" value="kiwi" />
+				<property name="password" value="grape" />
+			</dataSource>
+		</environment>
+		 -->
+	<!-- 그러나 사실 이러한 방식의 DB 연결은 위험해서 잘 하지 않는다. -->
+	</environments>
+	
+	<!-- 사용하고자 하는 mapper를 등록한다. -->
+	<mappers>
+		<mapper resource="member/model/mapper/member-mapper.xml" />
+		<!-- board 관련된 mapper.xml 파일이 생겼다면 관련 <mapper> 설정을 하나더 추가한다.  -->
+		<!-- 그래서 <mapper's'>인 것이다. -->
+		<!-- <mapper resource="board/model/mapper/board-mapper.xml" /> -->
+	</mappers>
+	<!-- SQL을 선언해 둔 XML이나 인터페이스 형태의 Mapper 위치를 지정한다. -->
+</configuration>
