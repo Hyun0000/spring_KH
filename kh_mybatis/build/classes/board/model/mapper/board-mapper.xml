@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Board">
+	<resultMap id="resultBoard" type="Board">
+		<!-- prop 는 필드명, column 은 DB 컬럼 명 -->
+		<id property="boardNum" column="BOARD_NUM" />
+		<result property="boardTitle" column="BOARD_TITLE" />
+		<result property="boardWriter" column="BOARD_WRITER" />
+		<result property="boardContent" column="BOARD_CONTENT" />
+		<result property="boardOriginalFileName" column="BOARD_ORIGINAL_FILENAME" />
+		<result property="boardRenameFileName" column="BOARD_RENAME_FILENAME" />
+		<result property="boardDate" column="BOARD_DATE" />
+		<result property="boardLevel" column="BOARD_LEVEL" />
+		<result property="boardRef" column="BOARD_REF" />
+		<result property="boardReplyRef" column="BOARD_REPLY_REF" />
+		<result property="boardReplySeq" column="BOARD_REPLY_SEQ" />
+		<result property="boardReadCount" column="BOARD_READCOUNT" />
+	</resultMap>
+
+	<!-- 1. ROWNUM을 사용하는 경우 -->
+	<select id="selectAllRownum" parameterType="map" resultMap="resultBoard">
+	<!-- 교재에서는 (parameterType="boardPage")로 적혀있었다. 그러나 이것은 오류가 나는 코드이다. -->
+	<!-- 먼저 혹시 모르니 Alias를 살펴보아라! 근데 없다. 이걸 수정해야한다. -->
+	
+	<!-- (parameterType="boardPage")을 (parameterType="map") 혹은 (parameterType="hashmap")으로 변경해야한다. -->
+	<!-- (parameterType="boardPage")는 자료형을 잘못 쓴것이다. -->
+	
+	<!-- 현재 dao에서 XML로 session.selectList("Board.selectAllRownum", boardPage) 이런 식으로 넘겨주고 있다. -->
+	<!-- 그러나 parameterType은 변수명을 적는 곳이 아니다. '자료형을 적는 곳'이다. -->
+	
+	<!-- dao에서 apple이라는 변수명에 data를 담아 보냈다고해서 XML에서 그것을 똑같이 (parameterType=변수명)으로 적으면 안 된다는 의미이다. -->
+	
+	<!--
+		쿼리 내부에 부등호를 사용할 경우 태그의 구분자(‘<’, ’>’)로 인식한다.
+		따라서 <![CDATA[ “Query” ]]> 코드로 쿼리를 감싸 태그의 구분자가 아니라 부등호라는 것을 인식시켜야 한다.
+		'&'도 다르게 인식하는 것을 방지한다. cf) HTML의 <pre>와 비슷한 역할이다. 
+	-->
+		<![CDATA[
+			SELECT * FROM (SELECT ROWNUM RNUM, BOARD_NUM, BOARD_TITLE,
+			BOARD_WRITER,
+			BOARD_CONTENT, BOARD_ORIGINAL_FILENAME, BOARD_RENAME_FILENAME,
+			BOARD_DATE, BOARD_LEVEL, BOARD_REF, BOARD_REPLY_REF, BOARD_REPLY_SEQ,
+			BOARD_READCOUNT
+			FROM (SELECT * FROM BOARD ORDER BY BOARD_REF DESC, BOARD_REPLY_REF DESC,
+			BOARD_LEVEL, BOARD_REPLY_SEQ))
+			WHERE RNUM >= #{start} AND RNUM <= #{end}
+		]]>
+	</select>
+	
+
+	<!-- (resultType="arraylist")을 지워도 문제가 없다. -->
+	<!-- <select id="selectAll" resultMap="resultBoard"> -->
+	<select id="selectAll" resultType="arraylist" resultMap="resultBoard">
+	<![CDATA[
+		SELECT * FROM (SELECT ROWNUM RNUM, BOARD_NUM, BOARD_TITLE, BOARD_WRITER,
+		BOARD_CONTENT, BOARD_ORIGINAL_FILENAME, BOARD_RENAME_FILENAME,
+		BOARD_DATE, BOARD_LEVEL, BOARD_REF, BOARD_REPLY_REF, BOARD_REPLY_SEQ,
+		BOARD_READCOUNT
+		FROM (SELECT * FROM BOARD ORDER BY BOARD_REF DESC, BOARD_REPLY_REF DESC, BOARD_LEVEL, BOARD_REPLY_SEQ))
+		ORDER BY BOARD_NUM
+	]]>
+	</select>
+	<!-- 위의 sql문에는 부등호가 따로 없지만 <![CDATA[ “Query” ]]>로 감싸도 문제없이 작동한다. -->
+	
+	<select id="listCount" resultType="_int">
+	<!-- resultType="_int" : 결과가 int 모양으로 반환된다는 의미 -->
+		SELECT COUNT(*) FROM BOARD
+	</select>
+</mapper>

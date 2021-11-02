@@ -2,8 +2,11 @@ package member.model.dao;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -12,7 +15,7 @@ import member.model.vo.Member;
 
 public class MemberDao {
 	public MemberDao() {}
-	
+// ========================================================================================
 	// java와 Oracle을 연결하는데 있어 MyBatis가 그 사이의 '연결고리' 역할을한다.
 	// JDBC는 기존의 연결고리 역할에서 '리소스 관리'로 역할이 바뀐다.
 	private SqlSessionFactory getSqlSessionFactory() {
@@ -37,12 +40,14 @@ public class MemberDao {
 	
 	public Member selectMember(Member m) {
 		Member member = null;
+		List<Member> memberList = null;
 		SqlSession session = null;
 		try {
 			// SqlSessionFactory를 통해 SqlSession 객체 생성
 			session = getSqlSessionFactory().openSession(false); // autocommit 해제
 			member = session.selectOne("Member.loginCheck", m);
 			// namespace(Member)와 엘리먼트의 id(loginCheck)값을 이용해 DB 접근
+			memberList = session.selectList("Member.loginCheck", m);
 			
 			// 1. Member
 			// member-mapper.xml에서 <mapper namespace="Member">의 namespace 값이다.
@@ -57,12 +62,12 @@ public class MemberDao {
 		}
 		return member;
 	}
-	
+// ========================================================================================
 	public Member checkIdDup(Member m) {
 		Member member = null;
 		SqlSession session = null;
 		try {
-			session = getSqlSessionFactory().openSession(false); // DB 연결
+			session = getSqlSessionFactory().openSession(false); // autocommit 해제
 			member = session.selectOne("Member.memberInfo", m.getId()); // namespace를 이용하여 DB 접근
 			System.out.println(session);
 		} catch (Exception e) {
@@ -72,14 +77,86 @@ public class MemberDao {
 		}
 		return member;
 	}
-
+// ========================================================================================
+	// 페이징 처리
+	public List<Member> selectMembers(int offset, int PAGE_SIZE) {
+		List<Member> members = null;
+		SqlSession session = null;
+		try {
+			session = getSqlSessionFactory().openSession(false); // autocommit 해제
+			RowBounds rowBounds = new RowBounds(offset, PAGE_SIZE);
+			 members = session.selectList("Member.listMember", null, rowBounds); // namespace를 이용하여 DB 접근
+			// selectList(String arg0, Object arg1, RowBounds arg2)
+			// 마지막에 rowBounds를 파라미터로 넣어주기위해 아무 값이 없는 null을 2번째에 넣는다.
+			System.out.println(session);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return members;
+	}
+// ========================================================================================
 	public int insertMember(Member m) {
 		System.out.println("m : " + m);
 		int result = 0;
 		SqlSession session = null;
 		try {
-			session = getSqlSessionFactory().openSession(false); // DB 연결
+			session = getSqlSessionFactory().openSession(false); // autocommit 해제
 			result = session.insert("Member.insertMember", m); // namespace를 이용하여 DB 접근
+			System.out.println(session);
+			if (result > 0) {
+				session.commit();
+			} else {
+				session.rollback();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		System.out.println("result dao : " + result);
+		return result;
+	}
+// ========================================================================================
+	public int memberDelete(Member member) {
+		System.out.println("m : " + member);
+		int result = 0;
+		SqlSession session = null;
+		try {
+			session = getSqlSessionFactory().openSession(false); // autocommit 해제
+			result = session.delete("Member.deleteMember", member); // namespace를 이용하여 DB 접근
+			System.out.println(session);
+			if (result > 0) {
+				session.commit();
+			} else {
+				session.rollback();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		System.out.println("result dao : " + result);
+		return result;
+	}
+// ========================================================================================
+	public int memberUpdate(Map<String, Object> map1) {
+		int result = 0;
+		SqlSession session = null;
+		try {
+			session = getSqlSessionFactory().openSession(false); // autocommit 해제
+			result = session.update("Member.updateMemberMap", map1); // namespace를 이용하여 DB 접근
+			/*
+			 * update(String statement, Object parameter)
+			 * String statement : "namespace명.엘리먼트의id명"
+			 * Object parameter : Object이기에 어떠한 모양이든 넣을 수있다.
+			 * 
+			 * ex)
+			 * Object parameter에 "jwPark"을 넣으면 mapper.XML의 해당 엘리먼트의 (parameterType="String")이다.
+			 * Object parameter에 VO를 넣으면 mapper.XML의 해당 엘리먼트의 (parameterType="package명.....class명")이다. 혹은 별칭 사용
+			 * 
+			 */
 			System.out.println(session);
 			if (result > 0) {
 				session.commit();

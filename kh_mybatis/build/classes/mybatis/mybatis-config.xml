@@ -4,6 +4,7 @@
 <configuration>
 	<settings>
 		<setting name="jdbcTypeForNull" value="NULL"/>
+		<!-- jdbc에서 NULL을 쓸 것이냐 안 쓸것이냐 -->
 	</settings>
 	<!-- 전체 XML에 대한 설정 -->
 	<!-- DML문 실행시 #{}에 넣어줄 parameter가 null일 경우 오류가 일어나지 않도록 NULL인 상태로 sql문을 실행해주도록 설정 -->
@@ -14,7 +15,7 @@
 	
 	<typeAliases>
 		<typeAlias type="member.model.vo.Member" alias="Member" />
-		<!-- <typeAlias type="board.model.vo.Board" alias="Board" /> -->
+		<typeAlias type="board.model.vo.Board" alias="Board" />
 		<!-- Alias들은 <typeAliases> ~ </typeAliases> 영역내에서 한 곳에 몰아서 작성한다. -->
 		<!-- 그래서 <typeAliase's'>인 것이다. -->
 	</typeAliases>
@@ -25,9 +26,10 @@
 	<!-- Alias는 오직 type이 들어간 애들하고만 관련이 있다. -->
  	
 	<environments default="development">
-	<!-- development 환경으로 세팅해라 -->
+	<!-- development 환경으로 setting해라 -->
+	<!-- 환경 = 'DB 연결하는 환경'을 의미한다. -->
 		<environment id="development">
-		<!-- 위에서 설정한 development 환경에서 사용할 id 지정 -->
+		<!-- 위에서 설정한 (default="development") 환경에서 사용할 id 지정 -->
 		<!-- JNDI를 이용해 DB를 연결하는 방식과 유사하다고 생각하면 된다. -->
 		<!-- cf) default명과 id명을 반드시  development로 할 필요는 없다. 둘이 일치만하면 된다. -->
 			
@@ -38,6 +40,7 @@
 			
 			<!-- 데이터베이스 세부 설정 -->
 			<dataSource type="POOLED">
+			<!-- DBCP처럼 POOL 방식으로 할 것이다. -->
 				<property name="driver" value="oracle.jdbc.driver.OracleDriver"/>
 				<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
 				<property name="username" value="scott"/>
@@ -48,9 +51,9 @@
 		<!-- 아래처럼 여러개의 DB 연결 설정을 만들어 놓은 후 필요에 따라 <environments default="development">의 default 값을 변경하면 된다. -->
 		<!-- 그래서 <environment's'>인 것이다. -->
 		
-		<!-- <environment id="d2">에 연결하고 싶으면  <environment's' default= ? >의 값을 아래처럼 설정한다. -->
-		<!-- <environments default="d2"> -->
-		<!-- 
+		<!-- <environment id="d2">에 연결하고 싶으면  <environment's' default= ? >의 값을 아래처럼 설정한다.
+		
+		<environments default="d2">
 		<environment id="d2">
 			<transactionManager type="JDBC"/>
 			<dataSource type="POOLED">
@@ -62,9 +65,9 @@
 		</environment>
 		 -->
 
-		<!-- <environment id="d3">에 연결하고 싶으면  <environment's' default= ? >의 값을 아래처럼 설정한다. -->
-		<!-- <environments default="d3"> -->
-		<!-- 
+		<!-- <environment id="d3">에 연결하고 싶으면  <environment's' default= ? >의 값을 아래처럼 설정한다.
+		
+		<environments default="d3">
 		<environment id="d3">
 			<transactionManager type="JDBC" />
 			<dataSource type="POOLED">
@@ -80,12 +83,12 @@
 	<!-- 그러나 사실 이러한 방식의 DB 연결은 위험해서 잘 하지 않는다. -->
 	</environments>
 	
-	<!-- 사용하고자 하는 mapper를 등록한다. -->
+	<!-- 위에서 설정한 사항들을 적용할 (사용하고자 하는) mapper를 등록한다. -->
 	<mappers>
 		<mapper resource="member/model/mapper/member-mapper.xml" />
-		<!-- board 관련된 mapper.xml 파일이 생겼다면 관련 <mapper> 설정을 하나더 추가한다.  -->
+		<!-- board와 관련된 mapper.xml 파일이 생겼다면 아래처럼 관련 <mapper> 설정을 하나더 추가한다.  -->
 		<!-- 그래서 <mapper's'>인 것이다. -->
-		<!-- <mapper resource="board/model/mapper/board-mapper.xml" /> -->
+		<mapper resource="board/model/mapper/board-mapper.xml" />
 	</mappers>
 	<!-- SQL을 선언해 둔 XML이나 인터페이스 형태의 Mapper 위치를 지정한다. -->
 </configuration>
