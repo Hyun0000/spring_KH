@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+		<!-- 객체를 만들어서 DispatcherServlet이 관리하게 해주는 설정 -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<!-- @Controller가 있으면 객 체로 만들어준다. -->
+	<annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<!-- view리졸브는 얘가 겍체로 -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- InternalResourceViewResolver class를 beans의 bean으로 만들어겠다는 의미 -->
+	<!-- new를 붙여주는 것과 같다. -->
+	
+	<!-- 객체를 만들때 아래 2개를 파라미터로 들고간다. -->
+	<!-- ex) 니가 'home'이라고 만 적으면 컨트롤러의 모젤앤 뷰에 홈이라고만 작성하면 디스패처가 그것을 뷰 리졸버에게 보내준다. 그럼 내(뷰리졸버)가 home.jsp 가 있는지 찾아서 그 파일을 선택해서 data를 넣어주겠다. -->
+	<!-- 뷰 리졸버는 그럼 다시 이것을 DispatcherServlet에게 보내주고 DispatcherServlet는 이것을 가지고 사용자게에게 응답한다. -->
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<!-- view는 얘가 객체로 -->
+	<context:component-scan base-package="ggg.hhh.ddd" />
+		<!-- 객체를 만들어서 DispatcherServlet이 관리하게 해주는 설정 -->
+	
+	<!-- 마이바티스 -->
+	<beans:bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<beans:property name="dataSource" ref="dataSource" />
+		<beans:property name="configLocation" value="classpath:mybatis-config.xml" />
+		<!-- value="classpath:mybatis-config.xml" -->
+		<!-- classpath가 어디일까 -->
+	</beans:bean>
+
+	<beans:bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<beans:constructor-arg ref="sqlSessionFactory" />
+		<!-- sqlSession은 sqlSessionFactory를 가지고 만든다. -->
+		<!-- sqlSession 이 이름을 dao에서 사용한다. -->
+		<!-- sqlSession이 객체 이름이다. -->
+	</beans:bean>
+	
+	
+</beans:beans>

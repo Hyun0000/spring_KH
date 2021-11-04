@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee https://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<!-- 이름 짝꿍이 중요하다. -->
+
+	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+	<!-- 모든 경우에 적용이 되는 애들을 적는다. -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+		/WEB-INF/spring/root-context.xml
+		/WEB-INF/spring/security-context.xml
+		</param-value>
+	</context-param>
+	
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<!-- 
+이런느낌
+DispatcherServlet appServlet = new DispatcherServlet().setContextConfigLocation("/WEB-INF/spring/appServlet/servlet-context.xml");
+"/WEB-INF/spring/appServlet/servlet-context.xml"는 DispatcherServlet의 필드들 중에서 org.springframework 이 필드에 설정된다는 의미
+생성을 하는데 초기에 파라미터로 ("/WEB-INF/spring/appServlet/servlet-context.xml")를 들고가는 것이다.
+이 파라미터는 contextConfigLocation 필드의 값으로 들어가는 것이다.
+따라서 ("/WEB-INF/spring/appServlet/servlet-context.xml")에 설정된 값이 중요하다.
+
+ -->
+
+	<!-- 얘는 그냥 유지 -->
+	<!-- Processes application requests -->
+	<servlet>
+		<servlet-name>appServlet</servlet-name> <!-- 짝꿍1 -->
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
+			<!-- 62p -->
+			<!-- servlet-context.xml이 기본 파일이름 -->
+			
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+		
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name> <!-- 짝꿍2 -->
+		<url-pattern>/</url-pattern><!-- 아렇게 들어오면 위의 내용을 적용시킨다. -->
+	</servlet-mapping>
+
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>
+			org.springframework.web.filter.CharacterEncodingFilter
+			<!-- CharacterEncodingFilter 파일 만들필요없다. 스프링이 알아서 생성 -->
+		</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>
+				UTF-8
+				<!-- 여기서 인코딩 방식만 지정하면 된다. -->
+			</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/* </url-pattern>
+	</filter-mapping>
+	
+	<!-- 에러 페이지도 추가 -->
+
+</web-app>
