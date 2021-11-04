@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee https://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<!-- 이름 짝꿍이 중요하다. -->
+
+	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+	<!-- 모든 경우에 적용이 되는 설정을 적는다. 있어도 되고 없어도 된다. 근데 보통 쓴다. -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<!-- <param-name>은 변경하면 안 된다. 고정값으로 그대로 유지한다. -->
+		<param-value>
+		<!-- 이름은 자유롭게 설정하면 된다. 단, 경로만 일치 시키면된다. -->
+		/WEB-INF/spring/root-context.xml
+		/WEB-INF/spring/security-context.xml
+		</param-value>
+	</context-param>
+	
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<listener>
+		<!-- Spring Container 생성 부분, 수정하지마라, 수정할 것도 없다. -->
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+<!-- 
+	약간 이런 느낌이라고 생각하면 된다.
+	- DispatcherServlet appServlet = new DispatcherServlet().setContextConfigLocation("/WEB-INF/spring/appServlet/servlet-context.xml");
+	- ("/WEB-INF/spring/appServlet/servlet-context.xml")이라는 값이 DispatcherServlet class의 필드들 중에서 contextConfigLocation 필드에 set 됐다는 의미
+	- DispatcherServlet class의 객체를 생성하는데 초기 설정값으로(parameter로) ("/WEB-INF/spring/appServlet/servlet-context.xml")을 들고가는 것이다. 
+	- 이 parameter는 contextConfigLocation라는 field의 값으로 들어가는 것이다.
+	- 따라서 ("/WEB-INF/spring/appServlet/servlet-context.xml")에 설정된 값이 중요하다.
+ -->
+
+	<!-- Processes application requests -->
+	<!-- DispatcherServlet에 대한 설정 부분이기에 해당 부분은 반드시 있어야한다. -->
+	<servlet>
+		<servlet-name>appServlet</servlet-name> <!-- 짝꿍1 : 이름이 같아야한다. -->
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!-- spring에 DispatcherServlet라는 class가 있다.(spring이 기본 제공) -->
+		<!-- DispatcherServlet가 모든 행동을 관장한다. -->
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
+			<!-- DispatcherServlet이 web.xml을 거쳐 servlet-context.xml에서 생성되는 것이다. -->
+			<!-- 62p -->
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+		
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name> <!-- 짝꿍2 : 이름이 같아야한다. -->
+		<url-pattern>/</url-pattern>
+		<!-- URL 값이  <url-pattern>에 맞춰서 들어오면 위에서 설정한 DispatcherServlet 관련 설정을 적용시킨다. -->
+	</servlet-mapping>
+
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>
+			org.springframework.web.filter.CharacterEncodingFilter
+			<!-- CharacterEncodingFilter 파일 만들 필요없다. spring이 알아서 생성한다. -->
+		</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>
+				UTF-8
+				<!-- 여기서 인코딩 방식만 지정하면 된다. -->
+			</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/* </url-pattern>
+	</filter-mapping>
+	
+	<!-- 에러 페이지 추가 필요 -->
+</web-app>

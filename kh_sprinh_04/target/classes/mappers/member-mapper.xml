@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+	<mapper namespace="Member">
+	<!-- namespace의 값(Member)을 통해 Dao에서 mapper.xml 내부에 있는 쿼리에 접근이 가능하다. -->
+	<!-- 일종의 일차관문 같은 역할이다. -->
+	<!-- 그후 각 쿼리문에 있는 id 값을 통해 정확히 원하는 쿼리문에 접근한다. -->
+	<!-- namespace의 "Member"라는 이름과 alias는 일절 관련이 없다.  -->
+	<!-- cf) <mapper namespace="Member"/> ==> 왼쪽처럼 닫히는 태그가 있으면 안 된다. -->
+	
+	<!-- Mybatis는 대부분이 XML 모양을 띄고 있기에 이 XML을 JAVA가 끌어다 쓸수 있도록 namespace를 쓰는 것이다. -->
+	<!-- (XML을 마치 JAVA처럼 쓰기위해 namespace를 지정하는 것이다.) -->
+	
+	<resultMap id="resultMember" type="Member">
+		<!-- 현재 ID column이 PK이기에 아래와 같이 지정했다. 그냥 result로 작성해도 된다. -->
+		<id property="id" column="ID" />
+		
+		<!-- property는 VO(Member)의 필드명, column은 DB 컬럼 명을 기술한다. -->
+		<result property="passwd" column="PASSWD" />
+		<result property="name" column="NAME" />
+		<result property="email" column="EMAIL" />
+		<result property="gender" column="GENDER" />
+		<result property="age" column="AGE" />
+		<result property="phone" column="PHONE" />
+		<result property="address" column="ADDRESS" />
+		<result property="enrollDate" column="ENROLL_DATE" />
+	</resultMap>
+	
+	<!-- 하나의 mapper.xml 파일안에 여러개의 <resultMap>을 만들어도 된다. -->
+	<resultMap id="r2" type="Member">
+		<id property="id" column="ID" />
+		<result property="passwd" column="PASSWD" />
+		<result property="name" column="NAME" />
+	</resultMap>
+	
+	<!-- (resultMap = resultMap의 id 값)을 넣어  해당 SQL문이 resultMap 형태로 반환된다고 나타낸다. -->
+	<!-- 엘리먼트의 id값은 무조건 줘야한다. -->
+	<select id="loginCheck" parameterType="Member" resultMap="r2">
+		<!-- SELECT * FROM MEMBER WHERE ID = #{id} and PASSWD = #{passwd} -->
+		SELECT id, passwd, name FROM MEMBER WHERE ID = #{id} and PASSWD = #{passwd}
+		<!-- 
+		* & [ PASSWD = #{passwd} ] 설명
+		1. PASSWD : DB의 column 이름
+		2. #{passwd} : VO의 해당 field의 이름과 같아야한다.(그래야 결과값도 넣을 수 있다.)
+		단, 해당 field에 대한 getter / setter가 무조건 있어야한다.
+		즉, column 이름과 VO의 field 이름이 무조건 같아야한다. 단, <resultMap>을 적용하면 이 제약에서 비교적 자유로율 수 있다.
+		
+		정리
+		* ==> resultType="member.model.vo.Member" (반환 값을 채워주는 부분)
+		parameterType="string" ==> #{userid} (sql문에 값을 넣어주는 부분)
+  		-->
+	</select>
+	
+	<!-- 정의한 ID(memberInfo)로 해당 쿼리에 접근해 DB에서 정보를 가져온다. -->
+	<select id="memberInfo" parameterType="string" resultMap="resultMember">
+		SELECT * FROM MEMBER WHERE ID = #{id}
+	</select>
+	
+	<!-- 1개 이상의 select 결과물이 나올때 resultType은 어떻게 작성하면 될까? -->
+	<!-- 이때 또한 1개의 select 결과물을 받을때와 마찬가지로 (resultType="member.model.vo.Member")으로 작성하면 된다. -->
+	<!-- MyBatis가 알아서 Member VO에 data를 채워준 다음에 그것을 또다시 알아서 list에 차곡차곡 쌓아준다. -->
+	<!-- <resultMap>으로 미리 DB column과 VO field를 mapping 해놨기 때문에 가능한 것이다. -->
+	<!-- resultType=List<Member> ==> 이것도 되긴하지만,  resultType="Member"로 적는게 좋다. -->
+	
+	<!-- 사실 resultType 자체를 안 적어도 된다. -->
+	<!-- 어차피 resultType은 dao에서 selectOne과 selectList 중 무엇을 썼느냐에 따라 결정된다. -->
+	<select id="listMember" resultType="member.model.vo.Member" resultMap="resultMember">
+		<!-- dao에서 parameter로 들고 온 rowBounds를 이용해 해당하는 범위만큼만 조회한다. -->
+		SELECT * FROM MEMBER ORDER BY ID
+		<!-- 이게 spl문 끝이다. 복잡하게 작성할 필요가 없다. -->
+		
+		<!-- 현재 parameterType은 없어도 된다. -->
+		<!-- why? 위의 sql문에서 ?(위치홀더)에 해당하는 부분이 없으므로 parameterType이 없어도 된다. -->
+		<!-- (where절도 없고 #{}도 없다.) -->
+		
+		<!-- XML의 sql문에서는 세미콜론(;) 을 쓰면 안된다. -->
+		<!-- SELECT * FROM MEMBER; (X) -->
+	</select>
+
+	<insert id="insertMember" parameterType="member.model.vo.Member">
+		insert into MEMBER (id, passwd, name, email) values (#{id}, #{passwd}, #{name}, #{email})
+	</insert>
+	<!-- return 타입이 어차피 정해져 있기에  resultType=int를 따로 적지않는다.-->
+	
+	<update id="updateMember" parameterType="member.model.vo.Member">
+		update MEMBER set name = #{name}, password = #{email}, email = ${email} where id = ${id}
+	</update>
+	<!-- return 타입이 어차피 정해져 있기에  resultType=int를 따로 적지않는다.-->
+	
+	<update id="updateMemberMap" parameterType="map">
+		update MEMBER set name = #{name}, email = #{email}, id = #{newId} where id = #{originId}
+	</update>
+	<!-- 
+		 Hashmap의 경우 resultType="java.util.Hashmap" / parameterType="java.util.Hashmap" 으로 쓸 수도 있지만
+		 MyBatis 자체에서 resultType="hashmap" 이렇게 사용할 수 있게 해줬다.(alias를 미리 등록해 놓은 것이다.)
+		 Hashmap은 parameterType과 resultType에서 모두 많이 쓰인다.(key : value 형태이니까 MyBatis에 딱 적절하다.)
+	 -->
+	 
+	
+	<delete id="deleteMember" parameterType="Member">
+		delete from MEMBER where id = #{id}
+	</delete>
+	<!-- return 타입이 어차피 정해져 있기에  resultType=int를 따로 적지않는다.-->
+  
+</mapper>
