@@ -124,7 +124,6 @@
 			<version>11.2.0.4</version>
 		</dependency>
 		
-		
 		<!-- MyBatis -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
@@ -173,6 +172,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.0</version>
+                <!-- <version>3.6.0</version>으로 설정해야한다. -->
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
