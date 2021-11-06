@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- 공유하고 싶은 객체들을 리소스로 만들어 놓는다. -->
+	<!-- 웹 컴포넌트 들을 주로 만들어 넣는다. -->
+	
+	<!-- (id="person") : 이것을 많이 사용한다. 다른 곳에서 갖다쓸때 이 이름을 이용하는 것이다. -->
+<!-- 	<bean id="person" class="com.mycompany.myapp05.person.model.vo.Person">
+		요게 끝이면 기본 생성자를 이용한 생성만 된다.
+		public Person() {}
+	</bean> -->
+
+	
+	<!-- 생성자 이용 -->
+	<!-- 아규먼트에 인덱스 / 네임 사용 -->
+	<bean id="person" class="com.mycompany.myapp05.person.model.vo.Person">
+		<!-- 기본 생성자 외에 name 인자를 넣을 수 있는 생성자를 오버로드해서 Person class에 만들어 줘야한다. -->
+		<!-- 인덱스 -->
+		<!-- <constructor-arg index="0" value="홍길동"></constructor-arg> -->
+		
+		<!-- name -->
+		<constructor-arg name="name" value="홍길동"></constructor-arg>
+	</bean>
+	<!-- 톰캣이 실행되고 이 단계를 거치면 콘솔에 '1개 arg 생성자'가 찍힌다.-->
+	<!-- 아직 HomeController를 들어가지 않은 것이다. -->
+	<!-- 즉, 톰캣이 실행되면서 Person class의 생성자를 거쳐 인스턴스가 만들어진 것이다. -->
+	
+<!-- 	<bean id="person2" class="com.mycompany.myapp05.person.model.vo.Person">
+		<constructor-arg index="0" value="홍길동"></constructor-arg>
+		<constructor-arg index="1" ref="j1"></constructor-arg>
+		ref라고 해야 j1을 찾는다.
+		2번째는 Job의 모양을 갖춰서 넣어줘야한다.
+		그러기위해 Job이라는 Bean을 따로 또 만들어야한다
+		여기 차원에서 Job의 Bean을 만들수는 없다.
+	</bean>
+	
+	현재 Job은 인터페이스이지만  class 속성을 사용한다.
+	<bean id="j1" class="com.mycompany.myapp05.job.model.vo.Job">
+	인터페이스이지만 이런 방식으로 객체를 만들 수 있는가?		
+	</bean> -->
+
+	<!-- 디벨로퍼가 잡을 implements하고 있다. 다형성을 이용한다. -->
+	<!-- 이게 정상이다. -->
+	<bean id="person2" class="com.mycompany.myapp05.person.model.vo.Person">
+		<constructor-arg index="0" value="홍"></constructor-arg>
+		<constructor-arg index="1" ref="j1"></constructor-arg>
+	</bean>
+	
+	<bean id="j1" class="com.mycompany.myapp05.job.model.vo.Developer">
+	</bean>
+	
+	<!-- 셍성자가 아니라 프로퍼티로 생성 -->
+	<bean id="person3" class="com.mycompany.myapp05.person.model.vo.Person">
+		<property name="name" value="길동"></property>
+		<!-- name 속성에 Person 의 필드명을 작성 -->
+		<!-- setName()에 값을 넣어준 것이다. -->
+		<property name="myjob" ref="j1"></property>
+	</bean>
+	
+	<!-- 각 bean의 위치는 상관없다. xml은 '실행순서'라는 개념이 없다. ref / value 모두 마찬가지 -->
+</beans>

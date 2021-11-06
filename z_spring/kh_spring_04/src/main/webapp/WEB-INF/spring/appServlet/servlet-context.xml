@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+	<!-- 현재 프로젝트 안에 있는 여러개의 class 중 '@Controller'이 붙어있는 애들을 객체로 만들어서  DispatcherServlet가 관리하게 하겠다는 설정 -->
+	<!-- 정확하게 : '@Controller'이 붙어있는 class들을 bean 객체 형태로 만들어 관리하겠다는 의미 -->
+	<!-- 쉽게 : '@Controller'가 있으면 객체로 만들어 관리하겠다. -->
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<!-- ViewResolver와 관련된 애들은 아래의 설정을 통해 객체로 만들겠다는 의미(new를 붙여주는 것과 같다.) -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<!-- InternalResourceViewResolver class를 beans의 bean으로 만들겠다는 의미 -->
+	
+	<!-- 객체를 만들때 아래의 (beans:property) 2개를 parameter로 들고간다. -->
+	
+	<!-- ex) 니가 'home'이라고 만 적으면 컨트롤러의 모젤앤 뷰에 홈이라고만 작성하면 디스패처가 그것을 뷰 리졸버에게 보내준다. 그럼 내(뷰리졸버)가 home.jsp 가 있는지 찾아서 그 파일을 선택해서 data를 넣어주겠다. -->
+	<!-- 뷰 리졸버는 그럼 다시 이것을 DispatcherServlet에게 보내주고 DispatcherServlet는 이것을 가지고 사용자게에게 응답한다. -->
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<!-- view는 얘가 객체로 -->
+	<context:component-scan base-package="ggg.hhh.ddd" />
+	<!-- ("ggg.hhh.ddd") package 영역 안에 있는 component들을 scan 하겠다는 의미로서, scan한 것들을 객체(Bean)로 만든다. -->
+	<!-- ("ggg.hhh.ddd") package 영역 내부 전체를 스캔해서 @Resource, @service, @controller 등과 같은게 있으면 그것들을 각각 하나하나의 객체(Bean)로 만든다는 의미이다. -->
+	<!-- ("ggg.hhh.ddd") package 영역에서 @가 있는 class들을 다 scan해서 context에 등록할 수 있도록 객체(Bean)로 만들어준다. -->
+	<!-- spring에서 더 이상 new는 필요없다. 알아서 다 객체로 만들어준다. -->
+	<!-- 각 class의 성격에 따라 그에 맞는 @Annotation을 class 위에 붙여만 놓으면 해당 class를 이용할 수있도록 spring이 알아서 객체로 만들어준다. -->
+	
+	<!-- 쉽게 : @가 붙어있는 class들을 scan해서 객체로 만든 후 사용할 수 있게 해준다. -->
+	<!-- 객체로 만들어야 프로그래밍이 된다. -->
+	
+	<!-- 아래의 것들을 사용도 하기 전에 톰캣이 미리 만들어 놓는다. -->
+	<!-- 사용전에 미리 역행해서 만든다는 의미 -->
+	
+	<beans:bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<beans:property name="dataSource" ref="dataSource" />
+		<beans:property name="configLocation" value="classpath:mybatis-config.xml" />
+		<!-- ﻿src/main/resources 폴더 영역이 classpath 이다. -->
+		<!-- 얘네들은 setter를 이용해서 생성하는 경우 -->
+	</beans:bean>
+
+	<beans:bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<beans:constructor-arg ref="sqlSessionFactory" />
+		<!-- sqlSession은 sqlSessionFactory를 가지고 만든다. -->
+		<!-- sqlSession : 이 이름을 dao에서 사용한다.(sqlSession이 객체 이름이다.) -->
+	</beans:bean>
+	<!-- (ref="sqlSessionFactory")를 넣어서 sqlSession을 만든다는 의미 -->
+	<!-- SqlSessionTemplate : SqlSession을 많이 만드는 것  -->
+	
+	<!-- constructor-arg -->
+	<!-- org.mybatis.spring.SqlSessionTemplate sqlSession = new org.mybatis.spring.SqlSessionTemplate(sqlSessionFactory); -->
+	<!-- 생성자 메소드를 사용해서 Bean이 생성된다는 의미 -->
+	
+</beans:beans>
