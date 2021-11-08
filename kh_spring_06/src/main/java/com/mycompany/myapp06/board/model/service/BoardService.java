@@ -1,5 +1,6 @@
 package com.mycompany.myapp06.board.model.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,5 +28,10 @@ public class BoardService {
 	// 글 삭제
 	public int boardDelete(Map<String, Object> deleteMap) {
 		return boardDao.boardDelete(deleteMap);
+	}
+// =============================================================================
+	// 검색 기능
+	public List<Board> searchBoard() {
+		return boardDao.searchBoard();
 	}
 }

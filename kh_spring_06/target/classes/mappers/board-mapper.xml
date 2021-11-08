@@ -15,30 +15,107 @@
 		<result property="boardReplySeq" column="BOARD_REPLY_SEQ" />
 		<result property="boardReadCount" column="BOARD_READCOUNT" />
 	</resultMap>
-	
+<!-- ==================================== 필기 ==================================== -->
+	<!-- 1. -->
+	<select id="boardlistRM" resultMap="boardRM">
+		select * from board
+	</select>
 
+	<!-- 2. hashmap -->
+	<select id="boardlistHM" resultType="hashmap">
+		select * from board
+	</select>
+  
+	<!-- 3. 조건을 주고 검색(조건 : title, writer, Content) / <choose> ~ <when> -->
+   <select id="searchboardlist" parameterType="map" resultType="hashmap">
+<!-- 
+   	- 현재 dao에서 [Map<String, Object> map1 = new HashMap<String, Object>();] 형태로 parameter를 넘겨주기 때문에
+   	  mapper에서도 (parameterType="map")으로 작성해야한다.
+   	
+ 	- 만약 dao에서 [HashMap<String, Object> map1 = new HashMap<String, Object>();] 형태로 parameter를 넘겨주었다면
+ 	  mapper에서도 (parameterType="hashmap")으로 작성해야한다.
+ 	  
+ 	- 현재 '조건'을 가지고 검색을 하는 것이기에 이에 대한 CASE 구분을 해야한다.
+-->
+  		select * from board where 1 = 1
+  		<!-- <choose> ~ <when>은 여러  <when> 중 일치하는 단 하나의 쿼리문만 포함된다. -->
+  		<!-- 만약 2개 이상의 <when>이 true라고 해도 그 중 하나만 반영된다.  -->
+  		<choose>
+  			<when test="bt != null">and BOARD_TITLE = #{bt}</when>
+ 			<when test="bw != null">and BOARD_WRITER = #{bw}</when>
+  			<when test="bc != null">and BOARD_CONTENT = #{bc}</when>
+  		</choose>
+  </select>
+  
+  	<!-- 4. 조건을 주고 검색(조건 : title, writer, Content) / <if> -->
+  	<!-- <if>는 위의 경우와 다르게 true를 만족하는 대로 모두 sql문에 반영된다. -->
+    <select id="searchboardlist2" parameterType="map" resultType="hashmap">
+  		select * from board where 1 = 1
+ 			<if test="bt != null">and BOARD_TITLE = #{bt}</if>
+ 			<if test="bw != null">and BOARD_WRITER = #{bw}</if>
+  			<if test="bc != null">and BOARD_CONTENT = #{bc}</if>
+  	</select>  
+  
+  	<!-- 5. 검색 코드 예시 ==> <if> -->
+   <select id="searchboardlist3" parameterType="map" resultType="hashmap">
+  		select * from board where 1 = 1
+  			<if test="category == '제목'">and BOARD_TITLE = #{searchValue}</if>
+ 			<if test="category == '작성자'">and BOARD_WRITER = #{searchValue}</if>
+			<if test="category == '내용'">and BOARD_CONTENT = #{searchValue}</if>
+   </select>
+  
+  <!-- 6. 잘못된 검색 코드 예시 ==> <choose> ~ <when> -->
+   <select id="searchboardlist4" parameterType="map" resultType="hashmap">
+   		select * from board where 1 = 1
+  		<choose>
+  			<when test="bt != null">and BOARD_TITLE = #{bt}</when>
+ 			<when test="bw != null">and BOARD_WRITER = #{bw}</when>
+  			<when test="bc != null">and BOARD_CONTENT = #{bc}</when>
+  		</choose>
+  </select> 
+  
+  <!-- ej 검색 코드 -->
+    <select id="searchboardlist5" parameterType="map" resultType="hashmap">
+ 		select * from board
+ 		where 1 = 1
+ 		<choose>
+ 			<when test="category == '제목'">
+ 				and BOARD_TITLE like '%'||#{searchValue}||'%'
+ 			</when>
+ 			
+			<when test="category == '작성자'">
+ 				and BOARD_WRITER like '%'||#{searchValue}||'%'
+ 			</when>
+ 			
+ 			<when test="category == '내용'">
+ 				and BOARD_CONTENT like '%'||#{searchValue}||'%'
+ 			</when>
+ 			
+		<when test="category == '전체'">
+ 				and (
+ 					BOARD_TITLE like '%'||#{searchValue}||'%'
+ 					OR
+ 					BOARD_WRITER like '%'||#{searchValue}||'%'
+ 					OR
+ 					BOARD_CONTENT like '%'||#{searchValue}||'%'
+ 				)
+ 			</when>
+ 		</choose>
+ </select>
+	<!-- cf) -->
+ 	<!-- 시퀀스를 쓰지 못할때 -->
 	<insert id="boardInsert2" parameterType="Board">
 		insert into board (BOARD_NUM, BOARD_TITLE, BOARD_WRITER, BOARD_CONTENT) 
-		values ((select nvl(max(BOARD_NUM) from board), 0) + 1, #{boardTitle}, #{boardWriter}, #{boardContent})
-		<!-- 시퀀스를 쓰지 못할때 -->
+		values ((select nvl(max(BOARD_NUM)), 0) from board) + 1, #{boardTitle}, #{boardWriter}, #{boardContent})
 	</insert>
 
-
-
-	<select id="boardlist" resultMap="boardRM">
-	  		select * from board
-	</select>
-	
 	<update id="boardUpdate">
-		<!-- 날짜를 바꿀경우 수정한 날짜를 반영할 것인지 아님 그냥 그대로 둘지는 조별에 따라 결정 -->
 		update board
 		<set>
 			<if test="boardTitle != null">
 				BOARD_TITLE = {boardTitle}
 			</if>
 			<!-- 쉼표는 뒤쪽에 붙는다. -->
-			<!-- 쉼표가 문제다 -->
-			
 			<if test="boardTitle != null">
 				,
 				BOARD_CONTENT = #{boardContent}
@@ -53,214 +130,41 @@
 		<!-- 조건에 해당하는 애들이 있으면 쿼리 추가하고 내가 알아서 쉼표를 찍어주거나 없애줄게 -->
 		<!-- 모두 해당하지 않으면 update board 여기서 끝 -->
 	</update>
-
-
-	
-
-
-
-<!--    <select id="boardlist" resultType="Board">
-  		select * from board
-  </select>
-  
-   <select id="boardlistRM" resultMap="boardRM">
-  		select * from board
-  </select>
-  
-	해쉬맵
-   <select id="boardlistHM" resultType="hashmap">
-  		select * from board
-  </select>
-  
-  검색 조건 : title writer Content
-   <select id="searchboardlist" parameterType="map" resultType="hashmap">
-	   dao에서 [Map<String, Object> map1]이 형태로 들어왔기 때문에 hashmap이 아니라 map으로 해야한다.
-	   만약 [HashMap<String, Object> map1]이 형태로 들어왔으면 parameterType="hashmap"으로 작성
-  		검색 조건을 들고들어올수도 있지만 안 들고 올수도 있다. 케이스 구분을 해야한다.
-  		select * from board
-  		where 1 = 1
-  		조건 중 하나만 일치하면 된다.
-  		<choose>
-  			<when test="bt != null">
-  				and BOARD_TITLE = #{bt}
-  			</when>
-  			
- 			 <when test="bw != null">
-  				and BOARD_WRITER = #{bw}
-  			</when>
-  			
-  			<when test="bc != null">
-  				and BOARD_CONTENT = #{bc}
-  			</when>
-  			검색시 title, 작성자, 내용을 각각 입력할 수 있는 칸이 있고
-  			이것들을 이용해 검색을 할때
-  		</choose>
-  </select>
-  
-    <select id="searchboardlist2" parameterType="map" resultType="hashmap">
-  		select * from board
-  		where 1 = 1
-  			조건을 모두 일치해야 한다.
-  			어쩄든 bt bw bc에 값이 실려있을 것이니(null이 아니니) 그 3개가 모두 일치해야한다.
-  			<if test="bt != null">
-  				and BOARD_TITLE = #{bt}
-  			</if>
-  			
- 			 <if test="bw != null">
-  				and BOARD_WRITER = #{bw}
-  			</if>
-  			
-  			<if test="bc != null">
-  				and BOARD_CONTENT = #{bc}
-  			</if>
-  </select>  
-  
-   <select id="searchboardlist3" parameterType="map" resultType="hashmap">
-  		select * from board
-  		where 1 = 1
-  			<if test="category == '제목'">
-  				and BOARD_TITLE = #{searchValue}
-  			</if>
-  			
- 			 <if test="category == '작성자'">
-  				and BOARD_WRITER = #{searchValue}
-  			</if>
-  			
- 			<if test="category1 == '작성자'">
-  				and BOARD_WRITER = #{searchValue1}
-  			</if>
-  			
-			 <if test="category == '내용'">
-  				and BOARD_CONTENT = #{searchValue}
-  			</if>
-  </select>
-  
-   <select id="searchboardlist4" parameterType="map" resultType="hashmap">
-  		select * from board
-  		where 1 = 1
-  		<choose>
-  			<when test="bt != null">
-  				and BOARD_TITLE = #{bt}
-  			</when>
-  			
- 			 <when test="bw != null">
-  				and BOARD_WRITER = #{bw}
-  			</when>
-  			
-  			<when test="bc != null">
-  				and BOARD_CONTENT = #{bc}
-  			</when>
-  		</choose>
-  </select> 
-  ej
-     <select id="searchboardlist5" parameterType="map" resultType="hashmap">
-  		select * from board
-  		where 1 = 1
-  		<choose>
-  			<when test="category == '제목'">
-  				and BOARD_TITLE like '%'||#{searchValue}||'%'
-  			</when>
-  			
- 			<when test="category == '작성자'">
-  				and BOARD_WRITER like '%'||#{searchValue}||'%'
-  			</when>
-  			
-  			<when test="category == '내용'">
-  				and BOARD_CONTENT like '%'||#{searchValue}||'%'
-  			</when>
-  			
-			<when test="category == '전체'">
-  				and (
-  					BOARD_TITLE like '%'||#{searchValue}||'%'
-  					OR
-  					BOARD_WRITER like '%'||#{searchValue}||'%'
-  					OR
-  					BOARD_CONTENT like '%'||#{searchValue}||'%'
-  				)
-  			</when>
-  		</choose>
-  </select>  -->
-	
-	
-
-
-
-
-	
-	
-
-
-
 <!-- ==================================== 실습 코드 ==================================== -->
+	<!-- 전체 글 조회 -->
+	<select id="boardlist" resultMap="boardRM">
+	  		select * from board
+	</select>
+	
+	<!-- 특정 글 검색 -->
+	<select id="searchBoard" parameterType="map" resultMap="boardRM">
+		select * from board where 1 = 1
+		<choose>
+  			
+			<when test="searchField == '제목'">and BOARD_TITLE like '%'||#{title}||'%'</when>
+			<when test="searchField == '작성자'">and BOARD_WRITER like '%'||#{writer}||'%'</when>
+			<when test="searchField == '내용'">and BOARD_CONTENT like '%'||#{content}||'%'</when>
+			<when test="searchField == '전체'">
+				and (
+					BOARD_TITLE like '%'||#{title}||'%'
+					OR
+					BOARD_WRITER like '%'||#{writer}||'%'
+					OR
+					BOARD_CONTENT like '%'||#{content}||'%'
+				)
+			
+			</when>
+		
+		</choose>
+	</select>
+	
+	<!-- 글 작성 -->	
 	<insert id="boardInsert" parameterType="map">
 		insert into board values (BOARD_SEQ.NEXTVAL, #{title}, #{writer}, #{content}, 'AAA', 'BBB', SYSDATE, 1, 1, 1, 1, 1)
 	</insert>
 	
+	<!-- 글 삭제 -->
 	<delete id="boardDelete">
 		delete from board where BOARD_TITLE = #{title} and BOARD_WRITER = #{writer}
 	</delete>
-<!-- ==================================== 실습 코드 ==================================== -->
-	
-	
-
-
-
-
-	
-	
-
-
-
-
-	
-	
-
-
-
-
-	
-	
-
-
-
-
-	
-	
-
-
-
-
-	
-	
-
-
-
-
-	
-	
-
-
-
-
-	
-	
-
-
-
-
-	
-	
-
-
-
-
-	
-	
-
-
-
-
-	
-	
-
 </mapper>

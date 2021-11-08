@@ -27,12 +27,10 @@ public class BoardController {
 		vo.setBoardTitle("assasdasd");
 		List<Board> volist = boardService.getBoardList(vo);
 		
-		
-		
 		mv.addObject("volist", volist);
 		mv.setViewName("board/boardlist");
 		return mv;
-		// views까지는 디폴트로 경로가 생긴다.
+		// views 폴더까지는 디폴트로 경로가 생긴다.
 	}
 	
 //	@RequestMapping(value = "boardlist", method = RequestMethod.GET)
@@ -46,4 +44,41 @@ public class BoardController {
 //		return "board/boardlist";
 //		// views까지는 디폴트로 경로가 생긴다.
 //	}
+	
+// ============================================================================================
+//	@Autowired
+//	private BoardService boardService;
+//	
+//	@RequestMapping(value = "/boardlist", method = RequestMethod.GET)
+//	public ModelAndView getBoardList(ModelAndView mv){
+//		System.out.println("Controller BoardController getBoardList");
+//		Board vo = new Board();
+//		vo.setBoardNum(111);
+//		vo.setBoardTitle("aaaa");
+//		List<Board> volist = boardService.getBoardList(vo);
+//		mv.addObject("volist", volist);
+//		mv.setViewName("board/boardlist");
+//		return mv;
+//	}
+//	@RequestMapping(value = "/boardlistPagin", method = RequestMethod.GET)
+//	public String getBoardListPaging(Model m){
+//		System.out.println("Controller BoardController getBoardListPaging");
+//		return "board/boardlist";
+//	}
+//	@RequestMapping(value = "/boardwrite", method = RequestMethod.GET)
+//	public String write(Model m){
+//		
+//		return "board/";
+//	}
+//	@RequestMapping(value = "/read", method = RequestMethod.GET)
+//	public String read(Model m){
+//
+//		return "board/";
+//	}
+//	@RequestMapping(value = "/update", method = RequestMethod.GET)
+//	public String update(Model m){
+//
+//		return "board/";
+//	}
+// ============================================================================================	
 }
