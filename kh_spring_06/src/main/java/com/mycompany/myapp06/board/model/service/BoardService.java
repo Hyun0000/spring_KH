@@ -1,37 +1,32 @@
 package com.mycompany.myapp06.board.model.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.mycompany.myapp06.board.model.dao.BoardDao;
 import com.mycompany.myapp06.board.model.vo.Board;
 
-@Service("boardService")
-public class BoardService {
-	@Autowired
-	private BoardDao boardDao;
+public interface BoardService {
 	
-	public List<Board> getBoardList(Board vo) {
-		System.out.println("나 지금 여기있어 : Service selectAllBoard");
-		return boardDao.getBoardList();
-	}
+	public List<Board> getBoardList() throws Exception;
 // =============================================================================
-	// 글 작성
-	public int boardInsert(Map<String, Object> insertMap) {
-		return boardDao.boardInsert(insertMap);
-	}
+	public List<Board> searchBoardList(Board vo) throws Exception;
 // =============================================================================
-	// 글 삭제
-	public int boardDelete(Map<String, Object> deleteMap) {
-		return boardDao.boardDelete(deleteMap);
-	}
+	public int insertBoard(Board vo) throws Exception;
 // =============================================================================
-	// 검색 기능
-	public List<Board> searchBoard() {
-		return boardDao.searchBoard();
-	}
+	public int updateBoard(Board vo) throws Exception;
+// =============================================================================
+	// 오버로딩(조건을 다양하게 주기 위해)
+	public int deleteBoard(Board vo) throws Exception;
+	public int deleteBoard(int bno) throws Exception;
+
+// ======================== 실습용 ========================
+//	// 글 작성
+//	public int boardInsert(Map<String, Object> insertMap);
+//// =============================================================================
+//	// 글 삭제
+//	public int boardDelete(Map<String, Object> deleteMap);
+//// =============================================================================
+//	// 검색 기능
+//	public List<Board> searchBoard();
+//// =============================================================================
+//	// 페이징 처리한 글 조회
+//	public List<Board> boardSelectPaging();
 }

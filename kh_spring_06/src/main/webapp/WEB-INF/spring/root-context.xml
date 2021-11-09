@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
-		
+	<!-- 해당 프로젝트의 어떤 부분을 scan할지 일종의 선별작업을 하는 것이다. -->
+	<!-- 보통 기능별로 분류 -->
+	<!-- 그래야 시간도 적게 걸리고 분업에도 용이하다. -->
+	<!-- <context:component-scan base-package="com.mycompany.myapp06.**.service"></context:component-scan> -->
+	<!-- service로 끝이나는 package는 스캔 -->
+	<!-- <context:component-scan base-package="com.mycompany.myapp06.**.dao"></context:component-scan> -->
+	<!-- dao로 끝이나는 package는 스캔 -->
 </beans>

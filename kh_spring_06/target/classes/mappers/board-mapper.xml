@@ -136,6 +136,11 @@
 	  		select * from board
 	</select>
 	
+	<!-- 페이징 처리한 전체 글 조회 -->
+	<select id="boardSelectPaging" resultMap="boardRM">
+	  		select * from board ORDER BY BOARD_NUM
+	</select>
+	
 	<!-- 특정 글 검색 -->
 	<select id="searchBoard" parameterType="map" resultMap="boardRM">
 		select * from board where 1 = 1
@@ -167,4 +172,10 @@
 	<delete id="boardDelete">
 		delete from board where BOARD_TITLE = #{title} and BOARD_WRITER = #{writer}
 	</delete>
+	
+	<!-- 글 업데이트 -->
+<!-- 	<update id="">
+		update board set BOARD_TITLE = #{title}, BOARD_WRITER = #{writer}, BOARD_CONTENT = #{content}
+		where 1 = 1
+	</update> -->
 </mapper>

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,8 +16,7 @@ public class BoardDao {
 	@Autowired
 	private SqlSession sqlSession;
 	
-	public List<Board> getBoardList() {
-		System.out.println("나 지금 여기있어 : Repository selectAllBoard");
+	public List<Board> getBoardList() throws Exception {
 // ==========================================================================
 		// 실습용
 		return sqlSession.selectList("BoardNS.boardlist");
@@ -93,5 +93,11 @@ public class BoardDao {
 	// 글 삭제
 	public int boardDelete(Map<String, Object> deleteMap) {
 		return sqlSession.insert("BoardNS.boardDelete", deleteMap);
+	}
+// =============================================================================
+	// 페이징 처리한 글 조회
+	public List<Board> boardSelectPaging() {
+		RowBounds rowBounds = new RowBounds(10, 20);
+		return sqlSession.selectList("BoardNS.boardSelectPaging", null, rowBounds);
 	}
 }

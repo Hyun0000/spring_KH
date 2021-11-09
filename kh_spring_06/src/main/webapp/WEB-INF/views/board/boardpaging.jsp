@@ -7,9 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-${volist}
-<br>
-<a href="boardwrite">글쓰기</a>
-<!-- 겟 방식으로 이동 -->
+${boardpaging}
 </body>
 </html>
