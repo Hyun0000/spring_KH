@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	
+	<typeAliases>
+		<typeAlias type="com.mycompany.kiwi.board.model.vo.Board" alias="Board"/>
+		<!-- <typeAlias type="com.mycompany.myapp06.member.model.vo.Member" alias="Member"/> -->
+	</typeAliases>
+	
+	<mappers>
+		<!-- 위치는 상대경로로 적기 -->
+		<mapper resource="mappers/board-mapper.xml"/>
+		<!-- <mapper resource="mappers/member-mapper.xml"/> -->
+	</mappers>
+
+</configuration>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="BoardNS">
+	<resultMap type="Board" id="boardRM">
+		<id property="boardNum" column="BOARD_NUM" />
+		<result property="boardTitle" column="BOARD_TITLE" />
+		<result property="boardWriter" column="BOARD_WRITER" />
+		<result property="boardContent" column="BOARD_CONTENT" />
+		<result property="boardOriginalFileName" column="BOARD_ORIGINAL_FILENAME" />
+		<result property="boardRenameFileName" column="BOARD_RENAME_FILENAME" />
+		<result property="boardDate" column="BOARD_DATE" />
+		<result property="boardLevel" column="BOARD_LEVEL" />
+		<result property="boardRef" column="BOARD_REF" />
+		<result property="boardReplyRef" column="BOARD_REPLY_REF" />
+		<result property="boardReplySeq" column="BOARD_REPLY_SEQ" />
+		<result property="boardReadCount" column="BOARD_READCOUNT" />
+	</resultMap>
+	
+	<select id="boardlistRM" resultMap="boardRM">
+		select * from board
+	</select>
+</mapper>
