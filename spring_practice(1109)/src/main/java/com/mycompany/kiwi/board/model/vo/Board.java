@@ -1,5 +1,9 @@
 package com.mycompany.kiwi.board.model.vo;
 
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 public class Board {
 	private int boardNum;
 	private String boardTitle;
@@ -13,9 +17,28 @@ public class Board {
 	private int boardReplyRef;
 	private int boardReplySeq;
 	private int boardReadCount;
+	
+	private MultipartFile report;
+	// input의 name과 이름이 같아야한다.
+	
+	public MultipartFile getReport() {
+		return report;
+	}
+	public void setReport(MultipartFile report) {
+		this.report = report;
+	}
+	// 이렇게 하면 따로
+	// @RequestParam(name="report") MultipartFile upfile,
+	// MultipartHttpServletRequest multi
+	// 이것을 작성하지 않아도 된다. 어차피 VO에 실려들어오니까
+	// 하지만 이 방법은 DB에 '파일이름만' 저장하는 방식을 사용할떄는 자주 사용하지 않는다.(쓸데없이 볼륨감 크게 VO를 들고다니니까)
+	// DB에 파일 자체를 다이렉트로 저장할 때는 유용하다.
+	
+	
 	public int getBoardNum() {
 		return boardNum;
 	}
+
 	public void setBoardNum(int boardNum) {
 		this.boardNum = boardNum;
 	}

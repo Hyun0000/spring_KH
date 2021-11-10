@@ -36,13 +36,14 @@ public class AroundLogAnnotation {
 	// @Before은 commonServicePointCut() pointcut 조건이면 발동한다.
 	// 이때 @Before에서 실행할 내용을 method로 정의한다.
 	public void beforeLog(JoinPoint jp) {
-		System.out.println("=========================================================================");
-		System.out.println("beforeLog method : " + jp.getThis() + "target name : " + jp.getSignature().getName());
+		System.out.println("================================beforeLog=================================");
+		System.out.println("beforeLog object : " + jp.getThis() + " target method : " + jp.getSignature().getName());
+		System.out.println("jp.getTarget() : " + jp.getTarget());
 		Object[] args = jp.getArgs();
 		for (int i = 0; i < args.length; i++) {
 			System.out.println("target args : " + args[i].toString());
 		}
-		System.out.println("=========================================================================");
+		System.out.println("================================beforeLog=================================");
 	}
 	// XML의 아래의 부분과 같다.
 	// <aop:before method="beforeLog" pointcut="execution(public * com.mycompany.myapp06..*Service.*(..))"/>
@@ -56,24 +57,27 @@ public class AroundLogAnnotation {
 	// @AfterReturning은 returning 속성을 설정해야한다.
 	@AfterReturning(pointcut= "commonServicePointCut()", returning = "ro")
 	public void afterReturningLog(JoinPoint jp, Object ro) {
-		System.out.println("=========================================================================");
-		System.out.println("afterReturningLog method : " + jp.getThis() + "target name : " + jp.getSignature().getName());
+		System.out.println("================================afterReturningLog=================================");
+		System.out.println("afterReturningLog object : " + jp.getThis() + "target method : " + jp.getSignature().getName());
+		System.out.println("jp.getTarget() : " + jp.getTarget());
 		
 		if (ro != null) {
 				System.out.println("target return : " + ro.toString());
 		}
-		System.out.println("=========================================================================");
+		System.out.println("================================afterReturningLog=================================");
 	}
 // =======================================================================================================================
 // =======================================================================================================================
 // =======================================================================================================================
 	// @Around은 commonControllerPointCut() pointcut 조건이면 발동한다.
 	// 이때 @Around에서 실행할 내용을 method로 정의한다.
-	@Around("commonControllerPointCut()")
+	@Around("commonServicePointCut()")
 	public Object aroundLog(ProceedingJoinPoint pjp) throws Throwable {
-		System.out.println("=========================================================================");
-		System.out.println("aroundLog method : " + pjp.getThis());
-		System.out.println("target name : " + pjp.getSignature().getName()); // 메소드 이름을 알 수 있다.
+		System.out.println("================================aroundLog=================================");
+		System.out.println("aroundLog object : " + pjp.getThis());
+		System.out.println("target method : " + pjp.getSignature().getName()); // 메소드 이름을 알 수 있다.
+		System.out.println("jp.getTarget() : " + pjp.getTarget());
+		System.out.println("================================aroundLog=================================");
 		
 		StopWatch sw = new StopWatch();
 		sw.start();
@@ -86,7 +90,11 @@ public class AroundLogAnnotation {
 		if (ro != null) {
 			System.out.println("target return : " + ro.toString());
 		}
-		System.out.println("=========================================================================");
+		System.out.println("================================aroundLog=================================");
+		System.out.println("aroundLog object : " + pjp.getThis());
+		System.out.println("target method : " + pjp.getSignature().getName()); // 메소드 이름을 알 수 있다.
+		System.out.println("jp.getTarget() : " + pjp.getTarget());
+		System.out.println("================================aroundLog=================================");
 		return ro;
 	}
 }

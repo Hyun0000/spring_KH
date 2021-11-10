@@ -98,5 +98,21 @@
 		transaction에 대한 @Annotation은 class 전체에 걸수도 있고 method 각각에 걸수도 있다.
 	-->
 	
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- property를 별도로 추가하지 않아도 Bean이 생성되지만 추가로 property를 설정해서 원하는 모양의 Bean을 더 구체적으로 만들 수 있다. -->
+		<beans:property name="maxUploadSize" value="-1"></beans:property>
+		<!-- maxUploadSize : 업로드되는 파일의 최대 크기를 지정한다. -->
+		<!-- value="-1" : 파일 크기가 무제한(기본값이기에 -1이면 굳이 적을 필요가 없다.) -->
+		<!-- value="1024" : 1024byte까지만 업로드 용량 제한 -->
+		<!--
+			Doc 설명
+			
+			Provides "maxUploadSize", "maxInMemorySize" and "defaultEncoding" settings as bean properties
+				이 프로퍼티 3개를 셋팅할 수 있게 제공하고 있다.
+		
+			DiskFileItemFactory properties ("sizeMax", "sizeThreshold", "headerEncoding") for details in terms of defaults and accepted values
+			DiskFileItemFactory에는 위와 같은 프로퍼티를 설정할 수 있다.
+		 -->
+	</beans:bean>
 	
 </beans:beans>

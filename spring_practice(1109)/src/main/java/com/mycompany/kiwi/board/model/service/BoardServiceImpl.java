@@ -12,6 +12,7 @@ import com.mycompany.kiwi.board.model.vo.Board;
 @Service("BoardService")
 // @Annotation을 이용한 transaction AOP 만들기는 이게 끝이다.
 // @Transactional(rollbackFor = Exception.class)
+// 현재 XML로 @Transaction AOP를 만들었기때문에 이 부분을 주석처리 했다.
 public class BoardServiceImpl implements BoardService {
 	@Autowired
 	private BoardDao boardDao;
@@ -23,31 +24,26 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public List<Board> searchBoardList(Board vo) throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public int insertBoard(Board vo) throws Exception {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int updateBoard(Board vo) throws Exception {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int deleteBoard(Board vo) throws Exception {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int deleteBoard(int bno) throws Exception {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 }
