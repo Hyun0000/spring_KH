@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- Appenders -->
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-5p: %c - %m%n" />
+		</layout>
+	</appender>
+	<!-- 어차피 다 이해 못한다. 대략적으로만 이해하면 된다. -->
+	<!-- logger라는 애가 (value="System.out")으로 (name="console")에 뿌리는 역할을 하는구나 -->
+	
+	<!-- 
+		log ex)
+		INFO : org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter - Looking for @ControllerAdvice: WebApplicationContext for namespace 'appServlet-servlet': startup date [Sun Nov 14 14:28:51 KST 2021]; parent: Root WebApplicationContext
+	
+		1. value="%-5p: %c - %m%n"  ==> %c %d %l %f ==> printf에서 쓰는 애들
+	
+		2. %-5p
+		- 5자리 글자 고정으로 디버그 레벨을 나타낸다.
+		- 마이너스(-)는 왼쪽정렬    ex) 'INFO '
+
+		3. %c : 카테고리 출력
+		
+		4. -
+		- %c와 %m%n 사이에 하이픈(-)을 표시
+		
+		5. %m%n
+		- %m : 로그 내용 출력
+		- %n : 개행문자
+	 -->
+	 
+<!-- 이 안의 것들을 콘솔에 뿌린다는 의미 / 이 안의 것들을 콘솔에 뿌린다는 의미 / 이 안의 것들을 콘솔에 뿌린다는 의미 / 이 안의 것들을 콘솔에 뿌린다는 의미 / 이 안의 것들을 콘솔에 뿌린다는 의미 -->
+	<!-- Application Loggers -->
+	<logger name="com.mycompany.garden">
+	<!-- 이 안(com.mycompany.garden)의 것들을 log로 뿌린다는 의미 -->
+		<level value="info" />
+		<!-- com.mycompany.garden 범위 안에서 logger를 쓰면 info level 포함 그 위의 level들의 log들을 모두 뿌려준다. -->
+		<!-- 아래도 같은 얘기 -->
+	</logger>
+	
+	<!-- 3rdparty Loggers -->
+	<logger name="org.springframework.core">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.beans">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.context">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.web">
+		<level value="info" />
+	</logger>
+<!-- 이 안의 것들을 콘솔에 뿌린다는 의미 / 이 안의 것들을 콘솔에 뿌린다는 의미 / 이 안의 것들을 콘솔에 뿌린다는 의미 / 이 안의 것들을 콘솔에 뿌린다는 의미 / 이 안의 것들을 콘솔에 뿌린다는 의미 -->
+
+	<!-- Root Logger -->
+	<root>
+		<priority value="warn" />
+		<!-- warn일때 뿌린다. -->
+		<appender-ref ref="console" />
+		<!-- 위의 <appender>를 가지고 console에 뿌린다. -->
+	</root>
+	
+</log4j:configuration>
