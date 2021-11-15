@@ -16,6 +16,7 @@
 	<resources mapping="/resources/**" location="/resources/" />
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<!-- 기본 ViewResolver -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
@@ -23,6 +24,15 @@
 	
 	<context:component-scan base-package="com.mycompany.garden" />
 	
+	<!-- controller에서 mv.setViewName("jsonView")라고 쓰면 해당 ViewResolver로 온다. -->
+	<!-- 기존의 InternalResourceViewResolver외에 json만을 위한 ViewResolver를 추가로 등록하는 것이다.(추가로 <bean>을 생성) -->
+	<!-- JsonView를 사용하기 위한 bean 객체 등록 -->
+	<beans:bean id="jsonView" class="net.sf.json.spring.web.servlet.view.JsonView"/>
 	
+	<!-- jsonView 인식을 위한 viewResolver 등록 -->
+	<beans:bean id="viewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<beans:property name="order" value="0"></beans:property>
+		<!-- ordrl 0 : 얘한테 우선순위를 준다 이런 느낌 -->
+	</beans:bean>
 	
 </beans:beans>

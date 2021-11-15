@@ -7,6 +7,7 @@ public class User {
 	private int age;
 	private String email;
 	
+	// 딱히 안 만들어도 되지만 나는 그냥 만들었다.
 	public User() {}
 
 	public User(String userId, String userPwd, String userName, int age, String email) {
