@@ -34,8 +34,95 @@
 	<button id="test8" type="button">ajax버튼8</button>
 	<div id="d8"></div>
 	
+	<!-- form 태그를 이용해 전달할때 ajax를 이용한다. -->
+	<!-- frm1은 action, mehtod가 없다. ==> ajax로 전송할 form이니까 -->
+	<form id="frm1">
+		<input type="text" name="name">
+		<input type="text" name="age">
+	</form>
+	<button id="frmaction" type="button">테스트form</button>
+	
+	<button type="button" id="ajaxBtn">js_ajax</button>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script type="text/javascript">
+// ==================================================================================
+	// js ajax
+    document.getElementById('ajaxBtn').onclick = sendRequest;
+        
+     // XMLHttpRequest 객체를 담을 변수(전역변수)
+     var httpRequest = null;
+
+     // XMLHttpRequest 객체 생성
+     function getXMLHttpRequest() {
+         if (window.ActiveXObject) {
+             // IE... 용
+        	 return new ActiveXObject("Microsoft.XMLHTTP");
+         } else if(window.XMLHttpRequest) {
+        	 return new XMLHttpRequest();
+         } else {
+             alert('너는 브라우저를 도대체 뭘 쓰는거니?');
+         }
+     }
+
+     //지정 메소드(GET/POST), 지정 URL, 파라미터 값을 사용하여 웹 서버에 요청을 전송
+     function sendRequest(method, url) {
+         // XMLHttpRequest 객체 생성
+         httpRequest = getXMLHttpRequest();
+
+         // method 방식 지정
+         var httpMethod = (method == null) ? "GET" : method;
+         if (httpMethod != "GET" && httpMethod != "POST") {
+             httpMethod = "GET";
+         }
+
+         // url 지정
+         var httpUrl = url;
+         
+         // 비동기식으로 XMLHttpRequest 객체 사용
+         // httpRequest.open(httpMethod, httpUrl, true);
+         httpRequest.open("GET", "ajaxJs", true);
+         
+         // 웹 서버에 전송할 컨텐트 타입 지정
+         httpRequest.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+         // 콜백 함수 지정
+         httpRequest.onreadystatechange = testJsAjax;
+
+
+         httpRequest.send();
+     }
+
+	     // 콜백 함수
+	     function testJsAjax() {
+	         if (httpRequest.readyState == 4) {
+	             if (httpRequest.status == 200) {
+	                 alert("응답 : " + httpRequest.responseText);
+	             }
+	         }
+	     }
+// ==================================================================================
+	$('#frmaction').on('click', function () {
+		var dataquery = $("#frm1").serialize();
+		// serialize() --> JS method
+		// <form> 태그 안쪽에 있는 <input>의 value들을 serialize(직렬화)한다.
+		// serialize()를 통해 해당 <input>의 value들이 JS Objcet 모양으로 반환된다.
+		// ex) { name : 신짱구, age : 12 }
+		console.log(dataquery); // name=신짱구&age=22
+		$.ajax({
+			url : "test9.do",
+			type : "post",
+			data : dataquery,
+			// $("#frm1").serialize() 그대로를 (data : )에 넣어도 된다.
+			success : function (data) {
+				console.log(data);
+			},
+			error : function (request, status, errorData) {
+				alert("error code : " + request.status + "\n"
+						+ "message : " + request.responseText + "\n"
+						+ "error : " + errorData);
+			}
+		})
+	})
 // ==================================================================================
 	// 첫 페이지 load시
 	$(function () {

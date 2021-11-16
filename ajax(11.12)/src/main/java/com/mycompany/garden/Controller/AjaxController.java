@@ -357,7 +357,8 @@ public class AjaxController {
 	}
 // =========================================================================================================
 	// ajax7 - view 단으로 넘겨 받은 객체 배열을 gson을 이용해 parsing
-	@RequestMapping(value = "test7.do", method = RequestMethod.POST)
+	// 이이제이
+	@RequestMapping(value = "test7.do", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String test7Method(@RequestBody String param) throws Exception {
 		logger.info("test7Method() run...");
@@ -372,9 +373,10 @@ public class AjaxController {
 //		List<Object> reqVoList2 = Arrays.asList(strArr);
 //		System.out.println("reqVoList2 : " + reqVoList2);
 		
-		// 방법1
+		// 방법1(json 형태가 아니면 굳이 이렇게 할 필요가 없다.)
 		// 화면으로부터 받은 객체 배열을 Sample 형태의 배열로 담아보자 
 		Sample[] reqVoArray = gson.fromJson(param, Sample[].class);
+		// 전달받은 data가 1개이면 위와 같은 배열을 선택할 필요가 없다.
 		
 		// 배열로 되어 있는 것을 list 모양으로 바꾸자
 		List<Sample> reqVoList = Arrays.asList(reqVoArray);
@@ -412,6 +414,8 @@ public class AjaxController {
 	// 2. Map<String, Object> 형태
 	public Map<String, Object> test8Method(@RequestBody String param) throws Exception {
 		
+	// 이러한 방법은 가끔가다 JSON 형식으로 data 전달이 안 될때가 있다.
+		
 		// 1. ArrayList<User> 형태
 		// List
 		ArrayList<User> list = new ArrayList<User>();
@@ -434,4 +438,57 @@ public class AjaxController {
 		return map1;
 		// 이렇게 해도된다.
 	}
+// =========================================================================================================
+	// ajax9
+	@RequestMapping(value = "test9.do", method = RequestMethod.POST)
+	@ResponseBody
+	public String test9Method(
+			// data 꺼내는 방법1
+			@RequestBody String param,
+			// data 꺼내는 방법2
+			@RequestParam("name") String name,
+			@RequestParam("age") String age) {
+		
+		// data 꺼내는 방법1
+		System.out.println("name : " + name);
+		System.out.println("age : " + age);
+		// name : 신짱구
+		// age : 22
+		
+		// data 꺼내는 방법2	
+		System.out.println("param : " + param);
+		// param : name=신짱구&age=22
+		// (@RequestBody String param) : 얘는 data를 통으로 받아오는 것이기 때문에  @RequestParam("name")과 같은 부분이 필요없다.
+		
+		// @ResponseBody가 있어야 (return "ok")를 viewpage로 인식하지 않는다.
+		return "ok";
+	}
+// =========================================================================================================
+	// // js ajax
+	@RequestMapping(value = "ajaxJs", method = RequestMethod.GET)
+	@ResponseBody
+	public String ajaxJsMethod() {
+		return "apple";
+	}
+// =========================================================================================================
+// =========================================================================================================
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
